@@ -1,4 +1,4 @@
-package com.edu.ylab;
+package com.edu.ylab.homework1;
 
 /**
  * Домашнее задание №1. Задача №3.
