@@ -1,11 +1,15 @@
 package com.edu.ylab.homework2.Task2;
 
+import java.util.Objects;
+
 public class ComplexNumber {
     private double a;
     private double b;
 
     public ComplexNumber(double a) {
+
         this.a = a;
+        this.b = 0;
     }
 
     public ComplexNumber(double a, double b) {
@@ -13,8 +17,8 @@ public class ComplexNumber {
         this.b = b;
     }
 
-    public static ComplexNumber sum(ComplexNumber x, ComplexNumber y){
-        return new ComplexNumber(x.a + y.a, x.b + y.b);
+    public ComplexNumber sum(ComplexNumber y){
+        return new ComplexNumber(this.a + y.a, this.b + y.b);
     }
 
 
@@ -38,5 +42,18 @@ public class ComplexNumber {
         else {
             return String.format("%.2f%.2fi", this.a, this.b);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ComplexNumber that = (ComplexNumber) o;
+        return Double.compare(that.a, a) == 0 && Double.compare(that.b, b) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(a, b);
     }
 }
