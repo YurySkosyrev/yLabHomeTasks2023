@@ -12,7 +12,7 @@ public class RateLimitedPrinter {
 
     public void print(String message) {
         long currentTime = System.currentTimeMillis();
-        if (lastPrintTime == 0 || currentTime - lastPrintTime > interval) {
+        if (currentTime - lastPrintTime > interval || lastPrintTime == 0) {
             System.out.println(message);
             lastPrintTime = currentTime;
         }
