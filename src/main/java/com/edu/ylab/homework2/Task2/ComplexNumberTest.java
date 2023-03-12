@@ -26,9 +26,11 @@ public class ComplexNumberTest {
 
         System.out.println("x= " + x);
         System.out.println("y= " + y);
-        System.out.println("x + y = " + ComplexNumber.sum(x,y));
-        System.out.println("x - y = " + ComplexNumber.sub(x,y));
-        System.out.println("x * y = " + ComplexNumber.mult(x,y));
+        System.out.println("x + y = " + x.sum(y));
+        System.out.println("x - y = " + x.sub(y));
+        System.out.println("x * y = " + x.mult(y));
         System.out.printf("Mod(x) = %.3f", x.mod());
+
+        //Assert-тесты в классе ComplexNumberAssertTest
     }
 }

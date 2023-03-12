@@ -22,12 +22,12 @@ public class ComplexNumber {
     }
 
 
-    public static ComplexNumber sub(ComplexNumber x, ComplexNumber y){
-        return new ComplexNumber(x.a - y.a, x.b - y.b);
+    public ComplexNumber sub(ComplexNumber y){
+        return new ComplexNumber(this.a - y.a, this.b - y.b);
     }
 
-    public static ComplexNumber mult(ComplexNumber x, ComplexNumber y){
-        return new ComplexNumber(x.a*y.a - x.b*y.b, x.a*y.b+ x.b* y.a);
+    public ComplexNumber mult(ComplexNumber y){
+        return new ComplexNumber(this.a*y.a - this.b*y.b, this.a*y.b+ this.b* y.a);
     }
 
     public double mod(){
@@ -39,8 +39,11 @@ public class ComplexNumber {
         if (this.b > 0) {
             return String.format("%.2f+%.2fi", this.a, this.b);
         }
-        else {
+        else if (this.b < 0){
             return String.format("%.2f%.2fi", this.a, this.b);
+        }
+        else {
+            return String.format("%.2f", this.a);
         }
     }
 

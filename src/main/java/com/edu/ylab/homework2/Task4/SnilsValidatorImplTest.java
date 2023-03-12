@@ -2,6 +2,9 @@ package com.edu.ylab.homework2.Task4;
 
 import com.edu.ylab.homework2.Task4.SnilsValidator.impl.SnilsValidatorImpl;
 
+/** Test of SnilsValidatorImpl.class
+ */
+
 public class SnilsValidatorImplTest {
     public static void main(String[] args) {
         SnilsValidatorImpl validator = new SnilsValidatorImpl();
