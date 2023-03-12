@@ -1,5 +1,6 @@
 package com.edu.ylab.homework2.Task4;
 
+import com.edu.ylab.homework2.Task4.SnilsValidator.SnilsValidator;
 import com.edu.ylab.homework2.Task4.SnilsValidator.impl.SnilsValidatorImpl;
 
 /** Test of SnilsValidatorImpl.class
@@ -7,7 +8,7 @@ import com.edu.ylab.homework2.Task4.SnilsValidator.impl.SnilsValidatorImpl;
 
 public class SnilsValidatorImplTest {
     public static void main(String[] args) {
-        SnilsValidatorImpl validator = new SnilsValidatorImpl();
+        SnilsValidator validator = new SnilsValidatorImpl();
 
         assert !validator.validate("01468870570") : "Test 1 wrong answer";
         assert validator.validate("90114404441") : "Test 2 wrong answer";

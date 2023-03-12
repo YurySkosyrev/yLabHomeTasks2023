@@ -1,5 +1,6 @@
 package com.edu.ylab.homework2.Task1;
 
+import com.edu.ylab.homework2.Task1.Sequences.Sequences;
 import com.edu.ylab.homework2.Task1.Sequences.impl.SequencesImpl;
 
 /**
@@ -24,7 +25,7 @@ import com.edu.ylab.homework2.Task1.Sequences.impl.SequencesImpl;
 
 public class SequencesTest {
     public static void main(String[] args) {
-        SequencesImpl sequences = new SequencesImpl();
+        Sequences sequences = new SequencesImpl();
 
         sequences.a(5);
         sequences.b(5);

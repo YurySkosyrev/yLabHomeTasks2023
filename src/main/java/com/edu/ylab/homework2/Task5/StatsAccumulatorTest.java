@@ -1,5 +1,6 @@
 package com.edu.ylab.homework2.Task5;
 
+import com.edu.ylab.homework2.Task5.StatsAccumulator.StatsAccumulator;
 import com.edu.ylab.homework2.Task5.StatsAccumulator.impl.StatsAccumulatorImpl;
 
 /**
@@ -14,7 +15,7 @@ import com.edu.ylab.homework2.Task5.StatsAccumulator.impl.StatsAccumulatorImpl;
  */
 public class StatsAccumulatorTest {
     public static void main(String[] args) {
-        StatsAccumulatorImpl s = new StatsAccumulatorImpl() {
+        StatsAccumulator s = new StatsAccumulatorImpl() {
         };
         s.add(1);
         s.add(2);
