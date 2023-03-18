@@ -7,7 +7,11 @@ import java.util.*;
 
 public class DatedMapImpl implements DatedMap {
 
-    private Map<String, Element> data;
+    private final Map<String, Element> data;
+
+    public DatedMapImpl() {
+        data = new HashMap<>();
+    }
 
     @Override
     public void put(String key, String value) {
@@ -37,7 +41,8 @@ public class DatedMapImpl implements DatedMap {
 
     @Override
     public Date getKeyLastInsertionDate(String key) {
-        return data.getOrDefault(key, null).getPutData();
+        Element element = data.get(key);
+        return element == null ? null : element.putData;
     }
 
     private class Element{
