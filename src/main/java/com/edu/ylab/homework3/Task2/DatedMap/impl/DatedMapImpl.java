@@ -21,7 +21,8 @@ public class DatedMapImpl implements DatedMap {
 
     @Override
     public String get(String key) {
-        return data.getOrDefault(key, null).elementValue;
+        Element element = data.get(key);
+        return element == null ? null : element.elementValue;
     }
 
     @Override
