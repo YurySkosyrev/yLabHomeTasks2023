@@ -12,15 +12,17 @@ import java.io.IOException;
 public class Test {
     public static void main(String[] args) throws IOException {
 
-        long start = System.currentTimeMillis();
 
-        File dataFile = new Generator().generate("data.txt", 100_000_00);
+
+        File dataFile = new Generator().generate("data.txt", 50_000_000);
         System.out.println(new Validator(dataFile).isSorted()); // false
-        File sortedFile = new Sorter().sortFile(dataFile);
-        System.out.println(new Validator(sortedFile).isSorted()); // true
 
+        long start = System.currentTimeMillis();
+        File sortedFile = new Sorter().sortFile(dataFile);
         long finish = System.currentTimeMillis();
-        System.out.println(finish-start);
+        System.out.println("Execution time: " + (finish-start));
+
+        System.out.println(new Validator(sortedFile).isSorted()); // true
 
         System.out.println(new Validator(sortedFile).isHashEquals(sortedFile)); // true
     }

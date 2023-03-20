@@ -1,15 +1,16 @@
 package com.edu.ylab.homework3.Task5;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 public class Sorter {
 
     public File sortFile(File dataFile) throws IOException {
 
-        int maxLine = 100000;
+
+        long memory = Runtime.getRuntime().freeMemory();
+
+        long readBytesSize = 0L;
 
         String DIR_PATH = "C://Test";
         File dir = new File(DIR_PATH);
@@ -17,7 +18,6 @@ public class Sorter {
 
         String tempFilePrefix = DIR_PATH + "//temp-file-";
         int filesCount = 0;
-        int currentLine = 0;
 
         //Проходим по исходному файлу и создаём отсортированные файлы
         try (FileInputStream fileInputStream = new FileInputStream(dataFile);
@@ -25,9 +25,10 @@ public class Sorter {
             List<Long> currentList = new ArrayList<>();
 
             while (scanner.hasNextLong()) {
-                currentList.add(Long.parseLong(scanner.next()));
-                currentLine++;
-                if (currentLine == maxLine) {
+                String nextString = scanner.next();
+                readBytesSize += nextString.getBytes().length;
+                currentList.add(Long.parseLong(nextString));
+                if (readBytesSize > memory) {
 
                     Collections.sort(currentList);
 
@@ -38,11 +39,11 @@ public class Sorter {
                     }
 
                     filesCount++;
-                    currentLine = 0;
+                    readBytesSize = 0;
                     currentList.clear();
                 }
             }
-            if(currentLine > 0) {
+            if (!currentList.isEmpty()) {
                 Collections.sort(currentList);
 
                 File file = new File(tempFilePrefix + filesCount);
@@ -50,6 +51,7 @@ public class Sorter {
                     currentList.stream().forEach(printWriter::println);
                     printWriter.flush();
                 }
+
                 filesCount++;
             }
         }
