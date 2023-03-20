@@ -22,6 +22,7 @@ public class OrgStructureParserTest {
         Employee boss = parser.parseStructure(file);
         boss.getSubordinate().stream().map(e -> e.getName()).forEach(System.out::println);
 
+        System.out.println();
         System.out.println(boss.getSubordinate().get(0).getSubordinate().get(0).getName());
     }
 }
