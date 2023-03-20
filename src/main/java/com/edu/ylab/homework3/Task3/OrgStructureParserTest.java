@@ -7,6 +7,12 @@ import com.edu.ylab.homework3.Task3.OrgStructureParser.impl.OrgStructureParserIm
 import java.io.File;
 import java.io.IOException;
 
+/**
+ Задание 3
+ Необходимо написать программу, получает на вход CSV файл формата, описанного
+ выше и формирует структуру объектов класса.
+ */
+
 public class OrgStructureParserTest {
     public static void main(String[] args) throws IOException {
         OrgStructureParser parser = new OrgStructureParserImpl();

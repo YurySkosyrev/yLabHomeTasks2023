@@ -3,8 +3,9 @@ package com.edu.ylab.homework3.Task3.OrgStructureParser.impl;
 import com.edu.ylab.homework3.Task3.Entity.Employee;
 import com.edu.ylab.homework3.Task3.OrgStructureParser.OrgStructureParser;
 
-import java.io.*;
-import java.nio.file.Files;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
