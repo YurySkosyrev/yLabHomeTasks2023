@@ -60,52 +60,53 @@ public class Sorter {
         Scanner[] scanners = new Scanner[filesCount];
         Map<Integer, Long> minValues = new HashMap<>();
 
-        // Создаём Map - ключ номер файла, значение - очередное значение Long
-        for (int i = 0; i < filesCount; i++) {
-            FileInputStream fileInputStream = new FileInputStream(tempFilePrefix + i);
-            Scanner scanner = new Scanner(fileInputStream);
-            scanners[i] = scanner;
-
-            if (scanner.hasNextLong()) {
-                minValues.put(i, Long.parseLong(scanner.next()));
-            }
-        }
-
         PrintWriter printWriter = new PrintWriter("external-sorted.txt");
+        try {
+            // Создаём Map - ключ номер файла, значение - очередное значение Long
+            for (int i = 0; i < filesCount; i++) {
+                FileInputStream fileInputStream = new FileInputStream(tempFilePrefix + i);
+                Scanner scanner = new Scanner(fileInputStream);
+                scanners[i] = scanner;
 
-        // Записываем очередное минимальное значение из всех файлов, обновляем Map
-        while (!minValues.isEmpty()) {
-            Long minValue = Long.MAX_VALUE;
-            Integer fileNumber = 0;
-            for (Map.Entry<Integer, Long> entry : minValues.entrySet()) {
-                if (entry.getValue() < minValue) {
-                    minValue = entry.getValue();
-                    fileNumber = entry.getKey();
+                if (scanner.hasNextLong()) {
+                    minValues.put(i, Long.parseLong(scanner.next()));
                 }
             }
 
-            printWriter.println(minValue);
+            // Записываем очередное минимальное значение из всех файлов, обновляем Map
+            while (!minValues.isEmpty()) {
+                Long minValue = Long.MAX_VALUE;
+                Integer fileNumber = 0;
+                for (Map.Entry<Integer, Long> entry : minValues.entrySet()) {
+                    if (entry.getValue() < minValue) {
+                        minValue = entry.getValue();
+                        fileNumber = entry.getKey();
+                    }
+                }
 
-            if (scanners[fileNumber].hasNextLong()) {
-                minValues.put(fileNumber, Long.parseLong(scanners[fileNumber].next()));
-            } else {
-                minValues.remove(fileNumber);
+                printWriter.println(minValue);
+
+                if (scanners[fileNumber].hasNextLong()) {
+                    minValues.put(fileNumber, Long.parseLong(scanners[fileNumber].next()));
+                } else {
+                    minValues.remove(fileNumber);
+                }
             }
+
+        } finally {
+            for (int i = 0; i < filesCount; i++) {
+                scanners[i].close();
+            }
+            printWriter.close();
+
+            // Удаляем временные файлы
+            for (int i = 0; i < filesCount; i++) {
+                File file = new File(tempFilePrefix + i);
+                file.delete();
+            }
+            dir.delete();
         }
-
-        for (int i = 0; i < filesCount; i++) {
-            scanners[i].close();
-        }
-        printWriter.close();
-
-
-        // Удаляем временные файлы
-        for (int i = 0; i < filesCount; i++) {
-            File file = new File(tempFilePrefix + i);
-            file.delete();
-        }
-        dir.delete();
-
+        
         return new File("external-sorted.txt");
     }
 }
