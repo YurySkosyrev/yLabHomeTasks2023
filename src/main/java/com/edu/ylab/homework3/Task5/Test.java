@@ -14,7 +14,7 @@ public class Test {
 
 
 
-        File dataFile = new Generator().generate("data.txt", 100_000_000);
+        File dataFile = new Generator().generate("data.txt", 10_000_000);
         System.out.println(new Validator(dataFile).isSorted()); // false
 
         long start = System.currentTimeMillis();

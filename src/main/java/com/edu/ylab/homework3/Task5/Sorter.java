@@ -12,7 +12,7 @@ public class Sorter {
 
         long readBytesSize = 0L;
 
-        String DIR_PATH = "C://Test";
+        String DIR_PATH = "test";
         File dir = new File(DIR_PATH);
         dir.mkdir();
 
@@ -104,6 +104,7 @@ public class Sorter {
             File file = new File(tempFilePrefix + i);
             file.delete();
         }
+        dir.delete();
 
         return new File("external-sorted.txt");
     }
