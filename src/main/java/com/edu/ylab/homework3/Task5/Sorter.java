@@ -8,7 +8,7 @@ public class Sorter {
     public File sortFile(File dataFile) throws IOException {
 
 
-        long memory = Runtime.getRuntime().freeMemory();
+        long memory = 1024;
 
         long readBytesSize = 0L;
 
@@ -39,6 +39,7 @@ public class Sorter {
                     }
 
                     filesCount++;
+                    System.out.println(filesCount);
                     readBytesSize = 0;
                     currentList.clear();
                 }
@@ -53,6 +54,7 @@ public class Sorter {
                 }
 
                 filesCount++;
+                System.out.println(filesCount);
             }
         }
 
@@ -74,11 +76,12 @@ public class Sorter {
             }
 
             // Записываем очередное минимальное значение из всех файлов, обновляем Map
+
             while (!minValues.isEmpty()) {
-                Long minValue = Long.MAX_VALUE;
                 Integer fileNumber = 0;
+                Long minValue = Long.MAX_VALUE;
                 for (Map.Entry<Integer, Long> entry : minValues.entrySet()) {
-                    if (entry.getValue() < minValue) {
+                    if (entry.getValue() <= minValue) {
                         minValue = entry.getValue();
                         fileNumber = entry.getKey();
                     }
@@ -106,7 +109,7 @@ public class Sorter {
             }
             dir.delete();
         }
-        
+
         return new File("external-sorted.txt");
     }
 }
