@@ -33,15 +33,15 @@ public class MovieLoaderImpl implements MovieLoader {
         String[] data = scanner.nextLine().split(";");
 
         Movie movie = new Movie();
-        movie.setYear(Integer.parseInt(data[0]));
-        movie.setLength(Integer.parseInt(data[1]));
+        movie.setYear(data[0] == "" ? -1 : Integer.parseInt(data[0]));
+        movie.setLength(data[1] == "" ? -1 : Integer.parseInt(data[1]));
         movie.setTitle(data[2]);
         movie.setSubject(data[3]);
         movie.setActors(data[4]);
         movie.setActress(data[5]);
         movie.setDirector(data[6]);
-        movie.setPopularity(Integer.parseInt(data[7]));
-        movie.setAwards(data[6].equals("No") ? false : true);
+        movie.setPopularity(data[7] == "" ? -1 : Integer.parseInt(data[7]));
+        movie.setAwards(data[8].equals("No") ? false : true);
 
         saveMovie(movie);
 
@@ -53,13 +53,18 @@ public class MovieLoaderImpl implements MovieLoader {
 
   private void saveMovie(Movie movie) throws SQLException {
     String insertQuery = "insert into movie (year, length, title, subject, actors, actress, " +
-            "director, popularity, awards) values ?, ?, ?, ?, ?, ?, ?, ?, ?";
+            "director, popularity, awards) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     try(Connection connection = dataSource.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)){
-      preparedStatement.setInt(1, movie.getYear());
 
-      if (movie.getLength() == null) {
+      if (movie.getYear() == -1) {
+        preparedStatement.setNull(1, Types.INTEGER);
+      } else {
+        preparedStatement.setInt(1, movie.getYear());
+      }
+
+      if (movie.getLength() == -1) {
         preparedStatement.setNull(2, Types.INTEGER);
       } else {
         preparedStatement.setInt(2, movie.getLength());
@@ -70,7 +75,11 @@ public class MovieLoaderImpl implements MovieLoader {
       preparedStatement.setString(5, movie.getActors());
       preparedStatement.setString(6, movie.getActress());
       preparedStatement.setString(7, movie.getDirector());
-      preparedStatement.setInt(8, movie.getPopularity());
+      if (movie.getPopularity() == -1) {
+        preparedStatement.setNull(8, Types.INTEGER);
+      } else {
+        preparedStatement.setInt(8, movie.getPopularity());
+      }
       preparedStatement.setBoolean(9,movie.getAwards());
 
       preparedStatement.executeUpdate();

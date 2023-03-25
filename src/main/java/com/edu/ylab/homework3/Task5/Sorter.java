@@ -8,7 +8,8 @@ public class Sorter {
     public File sortFile(File dataFile) throws IOException {
 
 
-        long memory = 1024;
+//        long memory = 1024;
+        long memory = Runtime.getRuntime().freeMemory();
 
         long readBytesSize = 0L;
 

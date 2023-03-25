@@ -11,7 +11,7 @@ public class MovieTest {
     DataSource dataSource = initDb();
     MovieLoader movieLoader = new MovieLoaderImpl(dataSource);
 
-    File dataFile = new File("movies.csv");
+    File dataFile = new File("film.csv");
     movieLoader.loadData(dataFile);
 
     /**
