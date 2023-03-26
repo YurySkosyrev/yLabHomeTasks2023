@@ -1,16 +1,17 @@
 package io.ylab.intensive.lesson04.filesort;
 
-import java.io.*;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.*;
+import java.util.Scanner;
 
-public class FileSortImpl implements FileSorter {
+public class FileSortWithoutBatchImpl implements FileSorter {
   private DataSource dataSource;
 
-  public FileSortImpl(DataSource dataSource) {
+  public FileSortWithoutBatchImpl(DataSource dataSource) {
     this.dataSource = dataSource;
   }
 
@@ -18,56 +19,26 @@ public class FileSortImpl implements FileSorter {
   public File sort(File data) throws IOException, SQLException {
     // ТУТ ПИШЕМ РЕАЛИЗАЦИЮ
 
-    int BATCH_SIZE = 10000;
-
-    String query = "insert into numbers (val) values (?)" ;
+    String query = "insert into numbers (val) values (?)";
 
     try (Connection connection = dataSource.getConnection();
          PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-      connection.setAutoCommit(false);
-
       try (FileInputStream fileInputStream = new FileInputStream(data);
            Scanner scanner = new Scanner(fileInputStream)) {
-
-        int currentSize = 0;
 
         while (scanner.hasNextLong()) {
 
           String nextString = scanner.next();
-          currentSize++;
-
           preparedStatement.setLong(1, Long.parseLong(nextString));
-          preparedStatement.addBatch();
-
-          if (currentSize == BATCH_SIZE) {
-            try {
-             preparedStatement.executeBatch();
-              connection.commit();
-            } catch (BatchUpdateException ex) {
-              connection.rollback();
-              ex.printStackTrace();
-            }
-
-            currentSize = 0;
-          }
-        }
-
-        if (currentSize > 0) {
-          try {
-            preparedStatement.executeBatch();
-            connection.commit();
-          } catch (BatchUpdateException ex) {
-            connection.rollback();
-            ex.printStackTrace();
-          }
-        }
+          preparedStatement.executeUpdate();
 
         }
       }
+    }
 
     String sortQuery = "select * from numbers order by val desc";
-    PrintWriter printWriter = new PrintWriter("sql-with-batch-sorted.txt");
+    PrintWriter printWriter = new PrintWriter("sql-without-batch-sorted.txt");
     String cleanQuery = "delete from numbers";
 
     try(Connection connection = dataSource.getConnection();
@@ -84,9 +55,10 @@ public class FileSortImpl implements FileSorter {
         printWriter.close();
       }
 
-     deleteStatement.executeUpdate();
+      deleteStatement.executeUpdate();
 
     }
-    return new File("sql-with-batch-sorted.txt");
+
+    return new File("sql-without-batch-sorted.txt");
   }
 }
