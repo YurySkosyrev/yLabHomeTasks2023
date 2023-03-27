@@ -48,6 +48,7 @@ public class PersistentMapImpl implements PersistentMap {
 
     try(Connection connection = dataSource.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
       preparedStatement.setString(1, activeMap);
 
       ResultSet rs = preparedStatement.executeQuery();
@@ -68,6 +69,7 @@ public class PersistentMapImpl implements PersistentMap {
 
     try(Connection connection = dataSource.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
       preparedStatement.setString(1, activeMap);
       preparedStatement.setString(2, key);
 
@@ -101,10 +103,9 @@ public class PersistentMapImpl implements PersistentMap {
     String query = "insert into persistent_map (map_name, KEY, value) values (?, ?, ?) " +
             "on conflict (map_name, KEY) do update set value = ?";
 
-//    String query = "insert into persistent_map (map_name, KEY, value) values (?, ?, ?)";
-
     try(Connection connection = dataSource.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
       preparedStatement.setString(1, activeMap);
       preparedStatement.setString(2, key);
       preparedStatement.setString(3, value);
@@ -123,7 +124,21 @@ public class PersistentMapImpl implements PersistentMap {
 
       preparedStatement.setString(1, activeMap);
 
-      preparedStatement.executeQuery();
+      preparedStatement.executeUpdate();
     }
   }
+
+  @Override
+  public String toString() {
+    List<String> result = new ArrayList<>();
+    try {
+      for (String key : this.getKeys()) {
+        result.add(key + " : " + this.get(key));
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    return result.toString();
+  }
+
 }

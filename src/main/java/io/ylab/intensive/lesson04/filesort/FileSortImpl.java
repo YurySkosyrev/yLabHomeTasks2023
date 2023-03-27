@@ -19,7 +19,6 @@ public class FileSortImpl implements FileSorter {
     // ТУТ ПИШЕМ РЕАЛИЗАЦИЮ
 
     int BATCH_SIZE = 10000;
-
     String query = "insert into numbers (val) values (?)" ;
 
     try (Connection connection = dataSource.getConnection();
@@ -40,9 +39,9 @@ public class FileSortImpl implements FileSorter {
           preparedStatement.setLong(1, Long.parseLong(nextString));
           preparedStatement.addBatch();
 
-          if (currentSize == BATCH_SIZE) {
+          if (currentSize == BATCH_SIZE || (!scanner.hasNextLong() && currentSize > 0)) {
             try {
-             preparedStatement.executeBatch();
+              preparedStatement.executeBatch();
               connection.commit();
             } catch (BatchUpdateException ex) {
               connection.rollback();
@@ -52,41 +51,12 @@ public class FileSortImpl implements FileSorter {
             currentSize = 0;
           }
         }
-
-        if (currentSize > 0) {
-          try {
-            preparedStatement.executeBatch();
-            connection.commit();
-          } catch (BatchUpdateException ex) {
-            connection.rollback();
-            ex.printStackTrace();
-          }
-        }
-
-        }
       }
-
-    String sortQuery = "select * from numbers order by val desc";
-    PrintWriter printWriter = new PrintWriter("sql-with-batch-sorted.txt");
-    String cleanQuery = "delete from numbers";
-
-    try(Connection connection = dataSource.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(sortQuery);
-        PreparedStatement deleteStatement = connection.prepareStatement(cleanQuery)) {
-
-      ResultSet rs = preparedStatement.executeQuery();
-
-      try {
-        while (rs.next()) {
-          printWriter.println(rs.getString(1));
-        }
-      } finally {
-        printWriter.close();
-      }
-
-     deleteStatement.executeUpdate();
-
     }
+
+    Printer printer = new Printer();
+    printer.printInFile(dataSource, "sql-with-batch-sorted.txt");
+
     return new File("sql-with-batch-sorted.txt");
   }
 }

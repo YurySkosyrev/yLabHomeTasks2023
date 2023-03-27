@@ -37,27 +37,8 @@ public class FileSortWithoutBatchImpl implements FileSorter {
       }
     }
 
-    String sortQuery = "select * from numbers order by val desc";
-    PrintWriter printWriter = new PrintWriter("sql-without-batch-sorted.txt");
-    String cleanQuery = "delete from numbers";
-
-    try(Connection connection = dataSource.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(sortQuery);
-        PreparedStatement deleteStatement = connection.prepareStatement(cleanQuery)) {
-
-      ResultSet rs = preparedStatement.executeQuery();
-
-      try {
-        while (rs.next()) {
-          printWriter.println(rs.getString(1));
-        }
-      } finally {
-        printWriter.close();
-      }
-
-      deleteStatement.executeUpdate();
-
-    }
+    Printer printer = new Printer();
+    printer.printInFile(dataSource, "sql-without-batch-sorted.txt");
 
     return new File("sql-without-batch-sorted.txt");
   }

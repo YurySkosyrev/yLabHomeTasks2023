@@ -14,28 +14,39 @@ public class ApiApp {
   public static void main(String[] args) throws Exception {
     DataSource dataSource = DbUtil.buildDataSource();
 
-    String exchangeName = "exc";
-    String queueName = "queue";
 
     ConnectionFactory connectionFactory = initMQ();
     // Тут пишем создание PersonApi, запуск и демонстрацию работы
 
     PersonApiImpl personApi = new PersonApiImpl(dataSource, connectionFactory);
 
+    System.out.println("Add some persons");
+    personApi.savePerson(1L,"Petr", "Petrov", "Petrovich");
+    personApi.savePerson(2L,"Pavel", "Pavlov", "Pavlovich");
+    personApi.savePerson(3L,"Tamara", "Ivanova", "Ivanovna");
+    personApi.savePerson(4L,"Nina", "Leonteva", "Alekseevna");
+    System.out.println("findAll method");
     System.out.println(personApi.findAll());
+    System.out.println("findPerson method id == 1");
     System.out.println(personApi.findPerson(1L));
+    System.out.println();
 
+    System.out.println("deletePerson method");
+    System.out.println(personApi.findAll());
+    System.out.println("Delete Person id == 2");
+    personApi.deletePerson(2L);
+    System.out.println(personApi.findAll());
+    System.out.println("findPerson method id == 2");
+    System.out.println(personApi.findPerson(2L));
+    personApi.deletePerson(2L);
+    System.out.println();
 
-//    try(Connection connection = connectionFactory.newConnection();
-//        Channel channel = connection.createChannel()){
-//      channel.exchangeDeclare(exchangeName, BuiltinExchangeType.TOPIC);
-//      channel.queueDeclare(queueName, true, false, false, null);
-//      channel.queueBind(queueName,exchangeName,"*");
-//
-//      String message = "V rot ebat";
-//      channel.basicPublish(exchangeName, "*", null, message.getBytes("UTF-8"));
-//      System.out.println(" [x] Sent '" + message + "'");
-//    }
+    System.out.println("Update Person");
+    System.out.println(personApi.findPerson(1L));
+    System.out.println("savePerson method");
+    personApi.savePerson(1L,"Oleg", "Olegov", "Olegovich");
+    System.out.println(personApi.findPerson(1L));
+    System.out.println(personApi.findAll());
   }
 
   private static ConnectionFactory initMQ() throws Exception {

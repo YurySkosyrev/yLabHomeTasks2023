@@ -4,6 +4,8 @@ import com.edu.ylab.homework3.Task3.Entity.Employee;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,6 +27,7 @@ public class MovieLoaderImpl implements MovieLoader {
 
     try (FileInputStream fileInputStream = new FileInputStream(file);
          Scanner scanner = new Scanner(fileInputStream)){
+
       scanner.nextLine();
       scanner.nextLine();
 
@@ -46,12 +49,12 @@ public class MovieLoaderImpl implements MovieLoader {
         saveMovie(movie);
 
       }
-    } catch (Exception e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
-  private void saveMovie(Movie movie) throws SQLException {
+  private void saveMovie(Movie movie) {
     String insertQuery = "insert into movie (year, length, title, subject, actors, actress, " +
             "director, popularity, awards) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -75,14 +78,19 @@ public class MovieLoaderImpl implements MovieLoader {
       preparedStatement.setString(5, movie.getActors());
       preparedStatement.setString(6, movie.getActress());
       preparedStatement.setString(7, movie.getDirector());
+
       if (movie.getPopularity() == -1) {
         preparedStatement.setNull(8, Types.INTEGER);
       } else {
         preparedStatement.setInt(8, movie.getPopularity());
       }
+
       preparedStatement.setBoolean(9,movie.getAwards());
 
       preparedStatement.executeUpdate();
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
     }
   }
 }

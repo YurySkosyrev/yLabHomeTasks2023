@@ -7,8 +7,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rabbitmq.client.BuiltinExchangeType;
+import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConnectionFactory;
 import io.ylab.intensive.lesson04.eventsourcing.Person;
+import io.ylab.intensive.lesson04.eventsourcing.RequestToDB;
 
 import javax.sql.DataSource;
 
@@ -20,6 +25,9 @@ public class PersonApiImpl implements PersonApi {
   private DataSource dataSource;
   private ConnectionFactory connectionFactory;
 
+  private final String exchangeName = "exc";
+  private final String queueName = "queue";
+
   public PersonApiImpl(DataSource dataSource, ConnectionFactory connectionFactory) {
     this.dataSource = dataSource;
     this.connectionFactory = connectionFactory;
@@ -27,12 +35,34 @@ public class PersonApiImpl implements PersonApi {
 
   @Override
   public void deletePerson(Long personId) {
-    
+
+    try {
+      ObjectMapper objectMapper = new ObjectMapper();
+      RequestToDB request = new RequestToDB("delete", personId.toString());
+
+      String deleteMessage = objectMapper.writeValueAsString(request);
+      sendMessage(deleteMessage);
+    } catch (JacksonException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
   public void savePerson(Long personId, String firstName, String lastName, String middleName) {
 
+    try {
+      Person person = new Person(personId, firstName, lastName, middleName);
+
+      ObjectMapper objectMapper = new ObjectMapper();
+      String body = objectMapper.writeValueAsString(person);
+      RequestToDB request = new RequestToDB("insert", body);
+
+      String saveMessage = objectMapper.writeValueAsString(request);
+      sendMessage(saveMessage);
+    }
+    catch (JacksonException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
@@ -47,13 +77,14 @@ public class PersonApiImpl implements PersonApi {
 
       Person person = new Person();
       ResultSet rs = preparedStatement.executeQuery();
-      while (rs.next()) {
+      if (rs.next()) {
         person.setId(rs.getLong("person_id"));
         person.setName(rs.getString("first_name"));
         person.setLastName(rs.getString("last_name"));
         person.setMiddleName(rs.getString("middle_name"));
+        return person;
       }
-      return person;
+      return null;
     }
   }
 
@@ -61,22 +92,35 @@ public class PersonApiImpl implements PersonApi {
   public List<Person> findAll() throws SQLException {
     List<Person> persons = new ArrayList<>();
 
-    String query = "select * from person";
+    String query = "select * from person order by person_id";
 
     try (Connection connection = dataSource.getConnection();
          PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-      Person person = new Person();
       ResultSet rs = preparedStatement.executeQuery();
       while (rs.next()) {
-        person.setId(rs.getLong("person_id"));
-        person.setName(rs.getString("first_name"));
-        person.setLastName(rs.getString("last_name"));
-        person.setMiddleName(rs.getString("middle_name"));
+        Long id = rs.getLong("person_id");
+        String first_name = rs.getString("first_name");
+        String last_name = rs.getString("last_name");
+        String middle_name = rs.getString("middle_name");
 
+        Person person = new Person(id, first_name, last_name, middle_name);
         persons.add(person);
       }
-      return persons;
+      return persons.size() > 0 ? persons : null;
+    }
+  }
+
+  private void sendMessage(String message) {
+    try (com.rabbitmq.client.Connection connection = connectionFactory.newConnection();
+         Channel channel = connection.createChannel()) {
+      channel.exchangeDeclare(exchangeName, BuiltinExchangeType.TOPIC);
+      channel.queueDeclare(queueName, true, false, false, null);
+      channel.queueBind(queueName, exchangeName, "*");
+
+      channel.basicPublish(exchangeName, "*", null, message.getBytes("UTF-8"));
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 }
