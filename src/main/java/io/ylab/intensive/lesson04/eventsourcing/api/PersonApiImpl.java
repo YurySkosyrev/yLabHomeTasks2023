@@ -37,17 +37,12 @@ public class PersonApiImpl implements PersonApi {
   public void deletePerson(Long personId) {
 
     try {
-      if (this.findPerson(personId) != null) {
+      ObjectMapper objectMapper = new ObjectMapper();
+      RequestToDB request = new RequestToDB("delete", personId.toString());
 
-          ObjectMapper objectMapper = new ObjectMapper();
-          RequestToDB request = new RequestToDB("delete", personId.toString());
-
-          String deleteMessage = objectMapper.writeValueAsString(request);
-          sendMessage(deleteMessage);
-      } else {
-        System.err.println("Была попытка удаления - запись по id " + personId + " не найдена");
-      }
-    } catch (SQLException | JacksonException e) {
+      String deleteMessage = objectMapper.writeValueAsString(request);
+      sendMessage(deleteMessage);
+    } catch (JacksonException e) {
       e.printStackTrace();
     }
   }

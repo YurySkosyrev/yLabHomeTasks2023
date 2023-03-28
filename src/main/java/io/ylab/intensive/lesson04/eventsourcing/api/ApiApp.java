@@ -25,25 +25,29 @@ public class ApiApp {
     personApi.savePerson(2L,"Pavel", "Pavlov", "Pavlovich");
     personApi.savePerson(3L,"Tamara", "Ivanova", "Ivanovna");
     personApi.savePerson(4L,"Nina", "Leonteva", "Alekseevna");
-    System.out.println("findAll method");
+    System.out.println("Find all persons");
     System.out.println(personApi.findAll());
-    System.out.println("findPerson method id == 1");
+    System.out.println("Find person with id == 1");
     System.out.println(personApi.findPerson(1L));
     System.out.println();
 
-    System.out.println("deletePerson method");
+    System.out.println("Delete person");
     System.out.println(personApi.findAll());
-    System.out.println("Delete Person id == 2");
+    System.out.println("Delete person with id == 2");
     personApi.deletePerson(2L);
-    System.out.println("findPerson method id == 2");
+    System.out.println("Find person with id == 2");
+    Thread.currentThread().sleep(100);
     System.out.println(personApi.findPerson(2L));
     personApi.deletePerson(2L);
     System.out.println();
 
     System.out.println("Update Person");
+    System.out.println("Find person with id == 1");
     System.out.println(personApi.findPerson(1L));
-    System.out.println("savePerson method");
+    System.out.println("Update person with id = 1");
     personApi.savePerson(1L,"Oleg", "Olegov", "Olegovich");
+    Thread.currentThread().sleep(100);
+    System.out.println("Find person with id == 1");
     System.out.println(personApi.findPerson(1L));
   }
 

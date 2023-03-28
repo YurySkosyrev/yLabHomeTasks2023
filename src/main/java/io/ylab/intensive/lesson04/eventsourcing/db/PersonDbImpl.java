@@ -42,7 +42,9 @@ public class PersonDbImpl implements PersonDb{
 
             preparedStatement.setLong(1, personId);
 
-            preparedStatement.executeUpdate();
+            if (preparedStatement.executeUpdate() == 0) {
+                System.err.println("Была попытка удаления - запись по id " + personId + " не найдена");
+            }
         }
     }
 
