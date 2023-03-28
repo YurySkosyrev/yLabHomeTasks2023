@@ -35,7 +35,6 @@ public class ApiApp {
     System.out.println(personApi.findAll());
     System.out.println("Delete Person id == 2");
     personApi.deletePerson(2L);
-    System.out.println(personApi.findAll());
     System.out.println("findPerson method id == 2");
     System.out.println(personApi.findPerson(2L));
     personApi.deletePerson(2L);
@@ -46,7 +45,6 @@ public class ApiApp {
     System.out.println("savePerson method");
     personApi.savePerson(1L,"Oleg", "Olegov", "Olegovich");
     System.out.println(personApi.findPerson(1L));
-    System.out.println(personApi.findAll());
   }
 
   private static ConnectionFactory initMQ() throws Exception {
