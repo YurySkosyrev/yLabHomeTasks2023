@@ -1,5 +1,8 @@
 package io.ylab.intensive.lesson04.eventsourcing.db;
 
+import com.rabbitmq.client.BuiltinExchangeType;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.ConnectionFactory;
 import io.ylab.intensive.lesson04.eventsourcing.Person;
 
 import javax.sql.DataSource;
@@ -10,6 +13,9 @@ import java.sql.SQLException;
 public class PersonDbImpl implements PersonDb{
 
     private DataSource dataSource;
+
+    private final String exchangeName = "exc";
+    private final String queueName = "queue";
 
     public PersonDbImpl(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -49,4 +55,5 @@ public class PersonDbImpl implements PersonDb{
             preparedStatement.executeUpdate();
         }
     }
+
 }

@@ -4,10 +4,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.GetResponse;
+import com.rabbitmq.client.*;
 import io.ylab.intensive.lesson04.DbUtil;
 import io.ylab.intensive.lesson04.RabbitMQUtil;
 import io.ylab.intensive.lesson04.eventsourcing.Person;
@@ -17,6 +14,7 @@ public class DbApp {
   public static void main(String[] args) throws Exception {
     DataSource dataSource = initDb();
     ConnectionFactory connectionFactory = initMQ();
+    queueDeclare(connectionFactory);
 
     String queueName = "queue";
 
@@ -28,23 +26,23 @@ public class DbApp {
     try (Connection connection = connectionFactory.newConnection();
          Channel channel = connection.createChannel()){
       while (!Thread.currentThread().isInterrupted()) {
-        GetResponse message = channel.basicGet(queueName, true);
-        if (message == null) {
-        } else {
-          String received = new String(message.getBody());
-          RequestToDB response = objectMapper.readValue(received, RequestToDB.class);
+          GetResponse message = channel.basicGet(queueName, true);
+          if (message == null) {
+          } else {
+            String received = new String(message.getBody());
+            RequestToDB response = objectMapper.readValue(received, RequestToDB.class);
 
-          try {
-            if (response.getMethod().equals("delete")) {
-              personDb.deletePerson(Long.parseLong(response.getBody()));
-            } else {
-              Person person = objectMapper.readValue(response.getBody(), Person.class);
-              personDb.savePerson(person);
+            try {
+              if (response.getMethod().equals("delete")) {
+                personDb.deletePerson(Long.parseLong(response.getBody()));
+              } else {
+                Person person = objectMapper.readValue(response.getBody(), Person.class);
+                personDb.savePerson(person);
+              }
+            } catch (SQLException e) {
+              e.printStackTrace();
             }
-          }catch (SQLException e){
-            e.printStackTrace();
           }
-        }
       }
     }
   }
@@ -65,5 +63,20 @@ public class DbApp {
     DataSource dataSource = DbUtil.buildDataSource();
     DbUtil.applyDdl(ddl, dataSource);
     return dataSource;
+  }
+
+  private static void queueDeclare(ConnectionFactory connectionFactory) {
+
+    final String exchangeName = "exc";
+    final String queueName = "queue";
+
+    try (com.rabbitmq.client.Connection connection = connectionFactory.newConnection();
+         Channel channel = connection.createChannel()) {
+      channel.exchangeDeclare(exchangeName, BuiltinExchangeType.TOPIC);
+      channel.queueDeclare(queueName, true, false, false, null);
+      channel.queueBind(queueName, exchangeName, "*");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }

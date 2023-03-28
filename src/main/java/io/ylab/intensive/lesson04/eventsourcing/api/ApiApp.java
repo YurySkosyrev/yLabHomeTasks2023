@@ -14,7 +14,6 @@ public class ApiApp {
   public static void main(String[] args) throws Exception {
     DataSource dataSource = DbUtil.buildDataSource();
 
-
     ConnectionFactory connectionFactory = initMQ();
     // Тут пишем создание PersonApi, запуск и демонстрацию работы
 
