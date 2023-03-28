@@ -25,8 +25,8 @@ public class PersonApiImpl implements PersonApi {
   private DataSource dataSource;
   private ConnectionFactory connectionFactory;
 
-  private final String exchangeName = "exc";
-  private final String queueName = "queue";
+  private final String EXCHANGE_NAME = "exc";
+  private final String QUEUE_NAME = "queue";
 
   public PersonApiImpl(DataSource dataSource, ConnectionFactory connectionFactory) {
     this.dataSource = dataSource;
@@ -114,11 +114,11 @@ public class PersonApiImpl implements PersonApi {
   private void sendMessage(String message) {
     try (com.rabbitmq.client.Connection connection = connectionFactory.newConnection();
          Channel channel = connection.createChannel()) {
-      channel.exchangeDeclare(exchangeName, BuiltinExchangeType.TOPIC);
-      channel.queueDeclare(queueName, true, false, false, null);
-      channel.queueBind(queueName, exchangeName, "*");
+      channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
+      channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+      channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, "*");
 
-      channel.basicPublish(exchangeName, "*", null, message.getBytes("UTF-8"));
+      channel.basicPublish(EXCHANGE_NAME, "*", null, message.getBytes("UTF-8"));
     } catch (Exception e) {
       e.printStackTrace();
     }

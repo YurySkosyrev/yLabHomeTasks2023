@@ -13,12 +13,24 @@ import java.sql.SQLException;
 public class PersonDbImpl implements PersonDb{
 
     private DataSource dataSource;
+    private ConnectionFactory connectionFactory;
 
-    private final String exchangeName = "exc";
-    private final String queueName = "queue";
+    private final String EXCHANGE_NAME = "exc";
+    private final String QUEUE_NAME = "queue";
 
-    public PersonDbImpl(DataSource dataSource) {
+    public PersonDbImpl(DataSource dataSource,
+                        ConnectionFactory connectionFactory) {
         this.dataSource = dataSource;
+        this.connectionFactory = connectionFactory;
+
+        try (com.rabbitmq.client.Connection connection = connectionFactory.newConnection();
+             Channel channel = connection.createChannel()) {
+            channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
+            channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+            channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, "*");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

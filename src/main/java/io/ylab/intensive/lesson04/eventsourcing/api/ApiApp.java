@@ -12,9 +12,10 @@ import java.nio.charset.StandardCharsets;
 
 public class ApiApp {
   public static void main(String[] args) throws Exception {
-    DataSource dataSource = DbUtil.buildDataSource();
 
+    DataSource dataSource = DbUtil.buildDataSource();
     ConnectionFactory connectionFactory = initMQ();
+
     // Тут пишем создание PersonApi, запуск и демонстрацию работы
 
     PersonApiImpl personApi = new PersonApiImpl(dataSource, connectionFactory);

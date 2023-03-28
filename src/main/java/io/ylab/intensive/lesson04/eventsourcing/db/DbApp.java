@@ -14,14 +14,13 @@ public class DbApp {
   public static void main(String[] args) throws Exception {
     DataSource dataSource = initDb();
     ConnectionFactory connectionFactory = initMQ();
-    queueDeclare(connectionFactory);
 
     String queueName = "queue";
 
     // тут пишем создание и запуск приложения работы с БД
 
+    PersonDb personDb = new PersonDbImpl(dataSource, connectionFactory);
     ObjectMapper objectMapper = new ObjectMapper();
-    PersonDb personDb = new PersonDbImpl(dataSource);
 
     try (Connection connection = connectionFactory.newConnection();
          Channel channel = connection.createChannel()){
@@ -63,20 +62,5 @@ public class DbApp {
     DataSource dataSource = DbUtil.buildDataSource();
     DbUtil.applyDdl(ddl, dataSource);
     return dataSource;
-  }
-
-  private static void queueDeclare(ConnectionFactory connectionFactory) {
-
-    final String exchangeName = "exc";
-    final String queueName = "queue";
-
-    try (com.rabbitmq.client.Connection connection = connectionFactory.newConnection();
-         Channel channel = connection.createChannel()) {
-      channel.exchangeDeclare(exchangeName, BuiltinExchangeType.TOPIC);
-      channel.queueDeclare(queueName, true, false, false, null);
-      channel.queueBind(queueName, exchangeName, "*");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 }
