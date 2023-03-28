@@ -51,22 +51,28 @@ public class PersonDbImpl implements PersonDb{
     @Override
     public void savePerson(Person person) throws SQLException {
 
-        String query = "insert into person (person_id, first_name, last_name, middle_name) values (?, ?, ?, ?) " +
-                "on conflict (person_id) do update set first_name = ?, last_name = ?, middle_name = ?";
+        if(person.getId() == null) {
+            System.err.println("Была попытка вставить запись с id = null");
+        } else if (person.getName() == null && person.getLastName()==null && person.getMiddleName()==null) {
+            System.err.println("Была попытка вставить запись со всеми полями null");
+        } else {
+            String query = "insert into person (person_id, first_name, last_name, middle_name) values (?, ?, ?, ?) " +
+                    "on conflict (person_id) do update set first_name = ?, last_name = ?, middle_name = ?";
 
-        try(Connection connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            try (Connection connection = dataSource.getConnection();
+                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setLong(1, person.getId());
-            preparedStatement.setString(2, person.getName());
-            preparedStatement.setString(3, person.getLastName());
-            preparedStatement.setString(4, person.getMiddleName());
+                preparedStatement.setLong(1, person.getId());
+                preparedStatement.setString(2, person.getName());
+                preparedStatement.setString(3, person.getLastName());
+                preparedStatement.setString(4, person.getMiddleName());
 
-            preparedStatement.setString(5, person.getName());
-            preparedStatement.setString(6, person.getLastName());
-            preparedStatement.setString(7, person.getMiddleName());
+                preparedStatement.setString(5, person.getName());
+                preparedStatement.setString(6, person.getLastName());
+                preparedStatement.setString(7, person.getMiddleName());
 
-            preparedStatement.executeUpdate();
+                preparedStatement.executeUpdate();
+            }
         }
     }
 
