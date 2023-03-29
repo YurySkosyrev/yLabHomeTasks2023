@@ -85,12 +85,13 @@ public class PersistentMapImpl implements PersistentMap {
   @Override
   public void remove(String key) throws SQLException {
 
-    String query = "delete from persistent_map where KEY=?";
+    String query = "delete from persistent_map where map_name=? and KEY=?";
 
     try(Connection connection = dataSource.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-      preparedStatement.setString(1, key);
+      preparedStatement.setString(1, activeMap);
+      preparedStatement.setString(2, key);
 
       preparedStatement.executeUpdate();
     }

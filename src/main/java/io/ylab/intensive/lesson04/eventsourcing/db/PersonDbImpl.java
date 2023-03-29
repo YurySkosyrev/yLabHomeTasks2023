@@ -42,9 +42,6 @@ public class PersonDbImpl implements PersonDb{
 
             preparedStatement.setLong(1, personId);
 
-            if (preparedStatement.executeUpdate() == 0) {
-                System.err.println("Была попытка удаления - запись по id " + personId + " не найдена");
-            }
         }
     }
 
@@ -71,7 +68,7 @@ public class PersonDbImpl implements PersonDb{
                 preparedStatement.setString(6, person.getLastName());
                 preparedStatement.setString(7, person.getMiddleName());
 
-                preparedStatement.executeUpdate();
+                System.out.println(preparedStatement.executeUpdate());
             }
         }
     }

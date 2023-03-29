@@ -53,6 +53,9 @@ public class ApiApp {
     Thread.currentThread().sleep(100);
     System.out.println("Find person with id == 1");
     System.out.println(personApi.findPerson(1L));
+    personApi.savePerson(1L,"Oleg", "Olegov", "Olegovich");
+    personApi.savePerson(1L,"Oleg", "Olegov", "Olegovich");
+    personApi.savePerson(1L,"Oleg", "Olegov", "Olegovich");
   }
 
   private static ConnectionFactory initMQ() throws Exception {

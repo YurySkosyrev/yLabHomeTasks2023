@@ -36,10 +36,15 @@ import io.ylab.intensive.lesson04.DbUtil;
 public class MovieTest {
   public static void main(String[] args) throws SQLException {
     DataSource dataSource = initDb();
-    MovieLoader movieLoader = new MovieLoaderImpl(dataSource);
 
+    long start = System.currentTimeMillis();
     File dataFile = new File("film.csv");
+//    MovieLoader movieLoader = new MovieLoaderImpl(dataSource);
+//    movieLoader.loadData(dataFile);
+    MovieLoader movieLoader = new MovieLoaderBatchImpl(dataSource);
     movieLoader.loadData(dataFile);
+    long finish = System.currentTimeMillis();
+    System.out.println("Execution time with batch-processing: " + (finish-start));
 
     /**
      * Тут написать в комментариях запрос получения всех
