@@ -1,15 +1,18 @@
 package io.ylab.intensive.lesson05.eventsourcing.api;
 
-import javax.sql.DataSource;
-
 import com.rabbitmq.client.ConnectionFactory;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import javax.sql.DataSource;
+
 @Configuration
+@ComponentScan(basePackages = {"io.ylab.intensive.lesson05.eventsourcing.api",
+        "io.ylab.intensive.lesson05.eventsourcing.db"})
 public class Config {
-  
+
   @Bean
   public DataSource dataSource() {
     PGSimpleDataSource dataSource = new PGSimpleDataSource();
@@ -17,7 +20,7 @@ public class Config {
     dataSource.setUser("postgres");
     dataSource.setPassword("postgres");
     dataSource.setDatabaseName("postgres");
-    dataSource.setPortNumber(5432);
+    dataSource.setPortNumber(5433);
     return dataSource;
   }
 
