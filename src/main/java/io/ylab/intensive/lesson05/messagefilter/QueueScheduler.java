@@ -1,22 +1,28 @@
-package io.ylab.intensive.lesson05.eventsourcing.db;
+package io.ylab.intensive.lesson05.messagefilter;
 
 import com.rabbitmq.client.*;
+import io.ylab.intensive.lesson05.eventsourcing.db.DBClient;
+import io.ylab.intensive.lesson05.eventsourcing.db.MessageProcessor;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 @Component
-public class MessageScheduler {
+public class QueueScheduler {
 
-    private final MessageProcessor messageProcessor;
     private final ConnectionFactory connectionFactory;
+    private final QueueProcessor queueProcessor;
+    private final DbClient dbClient;
     private final String EXCHANGE_NAME = "exc";
-    private final String QUEUE_NAME = "queue";
+    private final String QUEUE_NAME = "input";
 
-    public MessageScheduler(MessageProcessor messageProcessor, ConnectionFactory connectionFactory) {
-        this.messageProcessor = messageProcessor;
+
+    public QueueScheduler(ConnectionFactory connectionFactory, QueueProcessor queueProcessor, DbClient dbClient) {
         this.connectionFactory = connectionFactory;
+        this.queueProcessor = queueProcessor;
+        this.dbClient = dbClient;
 
         try (com.rabbitmq.client.Connection connection = connectionFactory.newConnection();
              Channel channel = connection.createChannel()) {
@@ -28,15 +34,22 @@ public class MessageScheduler {
         }
     }
 
+    String queueName = "input";
+
     public void start() {
+
+        File dictFile = new File("dictionary.txt");
+        dbClient.init();
+        dbClient.load(dictFile);
+
         try (Connection connection = connectionFactory.newConnection();
              Channel channel = connection.createChannel()){
             while (!Thread.currentThread().isInterrupted()) {
-                GetResponse message = channel.basicGet(QUEUE_NAME, true);
-                if (message == null) {
+                GetResponse response = channel.basicGet(queueName, true);
+                if (response == null) {
                 } else {
-                    String received = new String(message.getBody());
-                    messageProcessor.processSingleMessage(received);
+                    String message = new String(response.getBody());
+                    queueProcessor.filterMessage(message);
                 }
             }
         } catch (IOException | TimeoutException e) {

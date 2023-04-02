@@ -30,6 +30,10 @@ public class DBClient {
 
             preparedStatement.setLong(1, personId);
 
+            if (preparedStatement.executeUpdate() == 0) {
+                System.err.println("Была попытка удаления - запись по id " + personId + " не найдена");
+            }
+
         }
     }
 

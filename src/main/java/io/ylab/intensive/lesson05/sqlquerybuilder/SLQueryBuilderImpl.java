@@ -47,7 +47,7 @@ public class SLQueryBuilderImpl implements SQLQueryBuilder{
         try(java.sql.Connection connection = dataSource.getConnection()) {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
 
-            ResultSet rs = databaseMetaData.getTables(null, null, "%", null);
+            ResultSet rs = databaseMetaData.getTables(null, null, "%", new String[]{"TABLE","SYSTEM TABLE"});
             while (rs.next()) {
                 tablesNames.add(rs.getString(3));
             }
