@@ -27,11 +27,10 @@ public class QueueProcessor {
 
     public void filterMessage(String message) {
 
-        String goodMessage = message;
-        StringBuilder messageSB = new StringBuilder(message);
+        String messageForSet = message.replace("\r", "");
+        StringBuilder messageSB = new StringBuilder(messageForSet);
 
-        String stringForSet = message.replace("\r", "").replace("\n", " ");
-        Set<String> wordsOfMessage = Arrays.stream(stringForSet.split(" "))
+        Set<String> wordsOfMessage = Arrays.stream(messageForSet.split(" "))
                 .map(word -> word.replaceAll("[,.;!?]", ""))
                 .collect(Collectors.toSet());
 
