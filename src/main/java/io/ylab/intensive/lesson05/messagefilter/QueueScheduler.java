@@ -15,9 +15,8 @@ public class QueueScheduler {
     private final ConnectionFactory connectionFactory;
     private final QueueProcessor queueProcessor;
     private final DbClient dbClient;
-    private final String EXCHANGE_NAME = "exc";
-    private final String QUEUE_NAME = "input";
-
+    private final String INPUT_EXCHANGE = "input_exc";
+    private final String INPUT_QUEUE = "input";
 
     public QueueScheduler(ConnectionFactory connectionFactory, QueueProcessor queueProcessor, DbClient dbClient) {
         this.connectionFactory = connectionFactory;
@@ -26,9 +25,10 @@ public class QueueScheduler {
 
         try (com.rabbitmq.client.Connection connection = connectionFactory.newConnection();
              Channel channel = connection.createChannel()) {
-            channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
-            channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-            channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, "*");
+            channel.exchangeDeclare(INPUT_EXCHANGE, BuiltinExchangeType.TOPIC);
+            channel.queueDeclare(INPUT_QUEUE, true, false, false, null);
+            channel.queueBind(INPUT_QUEUE, INPUT_EXCHANGE, "*");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -38,7 +38,7 @@ public class QueueScheduler {
 
     public void start() {
 
-        File dictFile = new File("dictionary.txt");
+        File dictFile = new File("dictionary.file");
         dbClient.init();
         dbClient.load(dictFile);
 

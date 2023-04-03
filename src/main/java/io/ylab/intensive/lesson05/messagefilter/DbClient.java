@@ -57,7 +57,7 @@ public class DbClient {
 
                 while (scanner.hasNextLine()) {
 
-                    String word = scanner.nextLine();
+                    String word = scanner.nextLine().toLowerCase();
                     currentSize++;
 
                     preparedStatement.setString(1, word);
@@ -81,8 +81,8 @@ public class DbClient {
         }
     }
 
-    public boolean isWordInDB(String word) throws SQLException{
-        String query = "select word from bad_word word=?";
+    public boolean isWordInDB(String word) {
+        String query = "select word from bad_words where word=?";
 
         try(Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -92,6 +92,10 @@ public class DbClient {
             ResultSet rs = preparedStatement.executeQuery();
 
             return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
+        return false;
     }
 }

@@ -32,7 +32,7 @@ public class SLQueryBuilderImpl implements SQLQueryBuilder{
             }
         }
         if (columnsNames.size() > 0) {
-            return "SELECT " + String.join(", ", columnsNames) + " FROM " + tableName;
+            return "SELECT " + String.join(", ", columnsNames) + " FROM " + tableName +";";
         } else {
             return null;
         }
