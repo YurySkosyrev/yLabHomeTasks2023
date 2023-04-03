@@ -2,7 +2,6 @@ package io.ylab.intensive.lesson05.messagefilter;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.io.File;
 import java.sql.SQLException;
 
 public class MessageFilterApp {

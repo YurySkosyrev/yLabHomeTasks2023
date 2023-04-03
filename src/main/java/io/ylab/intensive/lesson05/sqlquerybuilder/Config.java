@@ -18,7 +18,7 @@ public class Config {
     dataSource.setUser("postgres");
     dataSource.setPassword("postgres");
     dataSource.setDatabaseName("postgres");
-    dataSource.setPortNumber(5433);
+    dataSource.setPortNumber(5432);
     return dataSource;
   }
 }

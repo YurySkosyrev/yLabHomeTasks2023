@@ -22,7 +22,7 @@ public class Config {
     dataSource.setUser("postgres");
     dataSource.setPassword("postgres");
     dataSource.setDatabaseName("postgres");
-    dataSource.setPortNumber(5433);
+    dataSource.setPortNumber(5432);
 
     String ddl = ""
                      + "drop table if exists person;"
