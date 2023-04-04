@@ -8,7 +8,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.*;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 @Component
 public class DbClient {
@@ -81,21 +83,25 @@ public class DbClient {
         }
     }
 
-    public boolean isWordInDB(String word) {
+    public Set<String> isWordInDB(Set<String> words) {
+
         String query = "select word from bad_words where word=?";
+        Set<String> existWords = new HashSet<>();
 
         try(Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setString(1, word);
+            for (String word : words) {
+                preparedStatement.setString(1, word.toLowerCase());
+                ResultSet rs = preparedStatement.executeQuery();
 
-            ResultSet rs = preparedStatement.executeQuery();
-
-            return rs.next();
+                if (rs.next()) {
+                    existWords.add(word);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return false;
+        return existWords;
     }
 }

@@ -31,13 +31,13 @@ public class QueueProcessor {
         Set<String> wordsOfMessage = Arrays.stream(messageForSet.split("[,.;!? \n]"))
                 .collect(Collectors.toSet());
 
-        for (String word : wordsOfMessage) {
-            if(dbClient.isWordInDB(word.toLowerCase())) {
+        Set<String> wordsInDB = dbClient.isWordInDB(wordsOfMessage);
+
+        for (String word : wordsInDB) {
                 String goodWord = word.substring(0,1)
                         + "*".repeat(word.length()-2)
                         + word.substring(word.length()-1);
                 replaceWordSb(messageSB, word, goodWord);
-            }
         }
 
         sendMessage(messageSB.toString(), EXCHANGE_NAME, QUEUE_NAME);
