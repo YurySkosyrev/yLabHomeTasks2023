@@ -5,9 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
@@ -30,8 +28,7 @@ public class QueueProcessor {
         String messageForSet = message.replace("\r", "");
         StringBuilder messageSB = new StringBuilder(messageForSet);
 
-        Set<String> wordsOfMessage = Arrays.stream(messageForSet.split(" "))
-                .map(word -> word.replaceAll("[,.;!?]", ""))
+        Set<String> wordsOfMessage = Arrays.stream(messageForSet.split("[,.;!? \n]"))
                 .collect(Collectors.toSet());
 
         for (String word : wordsOfMessage) {
@@ -62,8 +59,13 @@ public class QueueProcessor {
     private void replaceWordSb(StringBuilder sb, String word, String replaceWord) {
         int index = sb.indexOf(word);
 
+        String delimeter = ".,?! ;\r\n";
         while(index != -1) {
-            sb.replace(index, index + word.length(), replaceWord);
+            if ((index == 0 || delimeter.indexOf(sb.charAt(index-1)) != -1) &&
+                    (index+word.length() == sb.length() ||
+                            delimeter.indexOf(sb.charAt(index+word.length())) != -1)) {
+                sb.replace(index, index + word.length(), replaceWord);
+            }
             index += replaceWord.length();
             index = sb.indexOf(word, index);
         }
